@@ -1,8 +1,5 @@
 import requests
 import os
-from bs4 import BeautifulSoup
-from urllib.parse import quote_plus
-from typing import Dict, Any
 from serpapi import GoogleSearch
 
 
