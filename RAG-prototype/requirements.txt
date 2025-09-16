@@ -4,3 +4,5 @@ sentence-transformers
 faiss-cpu
 accelerate
 fastapi
+urllib
+GoogleSearch

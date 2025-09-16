@@ -28,8 +28,5 @@ def main(query):
         print(f"Response: {response}")
     return response
 
-"""
-development testing only
 if __name__ == "__main__":
-    main()
-"""
+    main("When was FUTA created?")
