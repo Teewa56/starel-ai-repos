@@ -3,6 +3,8 @@ transformers
 sentence-transformers
 faiss-cpu
 accelerate
-fastapi
-urllib
-GoogleSearch
+flask
+flask-cors
+beautifulsoup4
+requests
+lxml
