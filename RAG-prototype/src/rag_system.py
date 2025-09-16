@@ -1,11 +1,15 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from accelerate import Accelerator
+from .web_scraper import FetchFromNet
+from .secure_input import SecurePrompt
 
 class RAGSystem:
     def __init__(self, retriever):
         self.retriever = retriever
         self.accelerator = Accelerator()
+        self.webscraper = FetchFromNet()
+        self.checkPrompt = SecurePrompt()
         
         # Load the LLM and tokenizer
         model_name = "google/gemma-2b-it"
@@ -23,11 +27,18 @@ class RAGSystem:
         """
         # Step 1: Retrieve relevant documents
         retrieved_chunks = self.retriever.retrieve(query)
-        
+        #Also search the internet for some information
+        search_result = self.webscraper.search_google(query)
         # Step 2: Create a prompt with the retrieved context
         context = "\n".join([chunk['text'] for chunk in retrieved_chunks])
+        #Check if prompt is safe
+        isSafe = self.checkPrompt.screen_prompt(query)
+        if(isSafe != "yes"):
+            return "Sorry, I dont have thee permission to do this"
         prompt = f"""
-        Answer the following question based only on the provided context. If the answer cannot be found in the context, state "I'm sorry, I cannot find the answer to that in my knowledge base."
+        Answer the following question based only on the provided context. 
+        If the answer cannot be found in the context, state 
+        "I'm sorry, I cannot find the answer to that in my knowledge base."
 
         Context:
         {context}
@@ -54,5 +65,5 @@ class RAGSystem:
         # Post-process the response to remove the prompt
         response_start_index = response.find("Answer:") + len("Answer:")
         final_response = response[response_start_index:].strip()
-        
-        return final_response
+        result = f"{final_response}. For additonal knowledge you can look at {search_result}"
+        return result
